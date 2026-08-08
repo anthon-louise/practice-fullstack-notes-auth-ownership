@@ -22,7 +22,7 @@ export const registerUser = asyncHandler(async (req: Request, res: Response) => 
     throw new AppError("Email already exist", 409);
   }
 
-  const passwordHash = bcrypt.hash(password, SALT_ROUNDS);
+  const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
 
   const userResult = await pool.query<User>(`
     INSERT INTO
@@ -43,5 +43,31 @@ export const registerUser = asyncHandler(async (req: Request, res: Response) => 
 
 export const loginUser = asyncHandler(async (req: Request, res: Response) => {
   const {email, password} = loginSchema.parse(req.body);
-  
+
+  const userResult = await pool.query<User>(`
+    SELECT id, email, password, created_at
+    FROM users WHERE email=$1
+    `, [email]);
+    
+  if (userResult.rows.length === 0) {
+    throw new AppError("Invalid email or password", 401);
+  }
+
+  const user = userResult.rows[0];
+
+  const isMatch = await bcrypt.compare(password, user.password);
+
+  console.log(password);
+  console.log(user);
+
+  if (!isMatch) {
+    throw new AppError("Invalid email or password", 401);
+  }
+
+  const token = signToken({id: user.id, email: user.email});
+
+  res.cookie("token", token, COOKIE_OPTIONS);
+  res.status(200).json({
+    message: "Login successfully"
+  })
 });
