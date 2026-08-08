@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
-import { registerSchema } from "./schema.js";
+import { registerSchema, loginSchema } from "./schema.js";
 import { pool } from "../../config/db.js";
 import { AppError } from "../../errors/AppError.js";
 import bcrypt from "bcrypt";
@@ -39,4 +39,9 @@ export const registerUser = asyncHandler(async (req: Request, res: Response) => 
   res.status(201).json({
     message: "Registered successfully"
   })
+});
+
+export const loginUser = asyncHandler(async (req: Request, res: Response) => {
+  const {email, password} = loginSchema.parse(req.body);
+  
 });
