@@ -2,12 +2,14 @@ import express from "express";
 import dotenv from "dotenv";
 import { errorHandler } from "./middlewares/errorHandler.js";
 import authRoute from "./modules/auth/route.js";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.use("/api/auth", authRoute);
 

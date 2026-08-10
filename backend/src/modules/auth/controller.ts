@@ -32,7 +32,7 @@ export const registerUser = asyncHandler(async (req: Request, res: Response) => 
     `, [email, passwordHash]);
 
   const user = userResult.rows[0];
-  const token = signToken({id: user.id, email: user.email});
+  const token = signToken({id: user.id});
   
   res.cookie("token", token, COOKIE_OPTIONS);
 
@@ -64,7 +64,7 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
     throw new AppError("Invalid email or password", 401);
   }
 
-  const token = signToken({id: user.id, email: user.email});
+  const token = signToken({id: user.id});
 
   res.cookie("token", token, COOKIE_OPTIONS);
   res.status(200).json({
@@ -79,3 +79,8 @@ export const logoutUser = asyncHandler(async (req: Request, res: Response) => {
   })
 });
 
+export const me = asyncHandler(async (req: Request, res: Response) => {
+  res.status(200).json({
+    user: req.user
+  });
+});
