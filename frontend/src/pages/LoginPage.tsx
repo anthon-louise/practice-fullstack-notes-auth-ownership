@@ -24,7 +24,11 @@ const LoginPage = () => {
   }
 
   return (
-    <div>LoginPage</div>
+    <div>
+      <h3>Login</h3>
+
+      
+    </div>
   )
 }
 
