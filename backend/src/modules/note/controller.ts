@@ -22,3 +22,22 @@ export const createNote = asyncHandler(async (req: Request, res: Response) => {
     message: "Note created"
   });
 });
+
+export const getNotes = asyncHandler(async (req: Request, res: Response) => {
+  if (!req.user) {
+    throw new AppError("User not authenticated", 401);
+  }
+
+  const userId = req.user.id;
+
+  const notes = await pool.query(`
+    SELECT id, title, content, created_at
+    FROM notes WHERE id=$1
+    `, [userId]);
+
+  res.status(400).json({
+    message: "Notes fetched",
+    notes: notes.rows
+  })
+});
+
