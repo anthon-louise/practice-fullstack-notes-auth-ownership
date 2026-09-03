@@ -16,7 +16,9 @@ export const createNote = asyncHandler(async (req: Request, res: Response) => {
   await pool.query(`
     INSERT INTO
     notes (title, content, user_id)
+    VALUES ($1, $2, $3)
     `, [title, content, userId]);
+
 
   res.status(201).json({
     message: "Note created"
@@ -32,7 +34,7 @@ export const getNotes = asyncHandler(async (req: Request, res: Response) => {
 
   const notes = await pool.query(`
     SELECT id, title, content, created_at
-    FROM notes WHERE id=$1
+    FROM notes WHERE user_id=$1
     `, [userId]);
 
   res.status(400).json({
@@ -52,6 +54,7 @@ export const getNoteById = asyncHandler(async (req: Request, res: Response) => {
 
   const note = await pool.query(`
     SELECT id, title, content, created_at
+    FROM notes
     WHERE id=$1 AND user_id=$2
     `, [noteId, userId]);
 
@@ -101,7 +104,7 @@ export const deleteNote = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user.id;
 
   const note = await pool.query(`
-    DEELTE FROM notes
+    DELETE FROM notes
     WHERE id=$1 AND user_id=$2
     `, [noteId, userId]);
 
