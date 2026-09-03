@@ -69,7 +69,7 @@ export const updateNote = asyncHandler(async (req: Request, res: Response) => {
   const noteId = req.params.id;
 
   if (!req.user) {
-    throw new AppError("User no authenticated", 401);
+    throw new AppError("User not authenticated", 401);
   }
 
   const userId = req.user.id;
@@ -88,5 +88,28 @@ export const updateNote = asyncHandler(async (req: Request, res: Response) => {
 
   res.status(200).json({
     message: "Note updated"
+  })
+});
+
+export const deleteNote = asyncHandler(async (req: Request, res: Response) => {
+  const noteId = req.params.id;
+
+  if (!req.user) {
+    throw new AppError("User not authenticated", 404);
+  }
+
+  const userId = req.user.id;
+
+  const note = await pool.query(`
+    DEELTE FROM notes
+    WHERE id=$1 AND user_id=$2
+    `, [noteId, userId]);
+
+  if (note.rowCount === 0) {
+    throw new AppError("Note not found", 404);
+  }
+
+  res.status(200).json({
+    message: "Note deleted"
   })
 });
