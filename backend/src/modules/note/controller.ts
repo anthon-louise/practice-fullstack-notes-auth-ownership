@@ -1,6 +1,6 @@
 import asyncHandler from "express-async-handler";
 import { Request, Response } from "express";
-import { createNoteSchema } from "./schema.js";
+import { createNoteSchema, updateNoteSchema } from "./schema.js";
 import { AppError } from "../../errors/AppError.js";
 import { pool } from "../../config/db.js";
 
@@ -65,3 +65,28 @@ export const getNoteById = asyncHandler(async (req: Request, res: Response) => {
   })
 });
 
+export const updateNote = asyncHandler(async (req: Request, res: Response) => {
+  const noteId = req.params.id;
+
+  if (!req.user) {
+    throw new AppError("User no authenticated", 401);
+  }
+
+  const userId = req.user.id;
+
+  const {title, content} = updateNoteSchema.parse(req.body);
+
+  const note = await pool.query(`
+    UPDATE notes
+    SET title=COALESCE($1, title), content=COALESCE($2, content)
+    WHERE id=$3 AND user_id=$4
+    `, [title ?? null, content ?? null, noteId, userId]);
+
+  if (note.rowCount === 0) {
+    throw new AppError("Note not found", 404);
+  }
+
+  res.status(200).json({
+    message: "Note updated"
+  })
+});
