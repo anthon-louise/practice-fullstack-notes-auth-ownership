@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import { errorHandler } from "./middlewares/errorHandler.js";
 import authRoute from "./modules/auth/route.js";
+import noteRoute from "./modules/note/route.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 
@@ -17,6 +18,7 @@ app.use(cors({
 }))
 
 app.use("/api/auth", authRoute);
+app.use("/api/note", noteRoute);
 
 app.use(errorHandler);
 
