@@ -16,3 +16,8 @@ export const createNote = async (data: noteInput) => {
   const res = await api.post("/note/", {data});
   return res.data;
 }
+
+export const deleteNote = async (id: number) => {
+  const res = await api.delete(`/note/${id}`);
+  return res.data;
+}
