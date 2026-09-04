@@ -1,3 +1,4 @@
+import type { noteInput } from "../schemas/note";
 import type { Note } from "../types/note";
 import { api } from "./axios"
 
@@ -11,3 +12,7 @@ export const getNoteById = async (id: number): Promise<Note> => {
   return res.data.notes;
 }
 
+export const createNote = async (data: noteInput) => {
+  const res = await api.post("/note/", {data});
+  return res.data;
+}
