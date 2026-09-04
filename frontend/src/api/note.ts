@@ -21,3 +21,8 @@ export const deleteNote = async (id: number) => {
   const res = await api.delete(`/note/${id}`);
   return res.data;
 }
+
+export const updateNote = async (id: number, data: noteInput) => {
+  const res = await api.put(`/note/${id}`, {data});
+  return res.data;
+}
