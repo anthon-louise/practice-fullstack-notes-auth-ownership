@@ -37,7 +37,7 @@ export const getNotes = asyncHandler(async (req: Request, res: Response) => {
     FROM notes WHERE user_id=$1
     `, [userId]);
 
-  res.status(400).json({
+  res.status(200).json({
     message: "Notes fetched",
     notes: notes.rows
   })
