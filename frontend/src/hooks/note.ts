@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { createNote, getNoteById, getNotes, updateNote } from "../api/note"
+import { createNote, deleteNote, getNoteById, getNotes, updateNote } from "../api/note"
 import type { noteInput } from "../schemas/note"
 import { toast } from "sonner"
 
@@ -46,4 +46,19 @@ export const useUpdateNote = () => {
       toast.error(err.response?.data?.message || "Failed to update note")
     }
   })
+}
+
+export const useDeleteNote = () => {
+  const queryClient = useQueryClient();
+
+  useMutation({
+    mutationFn: (id: number) => deleteNote(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ["notes"]}),
+      toast.success("Note deleted")
+    },
+    onError: (err: any) => {
+      toast.error(err.response?.data?.message || "Failed to delete note")
+    }
+  });
 }
